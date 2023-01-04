@@ -1,7 +1,7 @@
 package dev.clng.interpreter.statements;
 
 /**
- * @author ennio
+ * @author simon & ennio
  **/
 public class IfStatement implements IStatement
 {

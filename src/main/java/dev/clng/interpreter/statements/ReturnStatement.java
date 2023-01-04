@@ -3,7 +3,7 @@ package dev.clng.interpreter.statements;
 import java.util.function.Consumer;
 
 /**
- * @author ennio
+ * @author simon & ennio
  **/
 public class ReturnStatement implements IStatement
 {

@@ -9,7 +9,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * @author ennio
+ * @author simon & ennio
  **/
 public class LexicalParser
 {
