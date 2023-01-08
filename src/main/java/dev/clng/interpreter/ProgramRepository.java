@@ -24,7 +24,8 @@ public class ProgramRepository {
             }
         }
         var x = RuntimeContext.getMemory();
-        System.out.println(RuntimeContext.convertByteToVar("a"));
+        int v = RuntimeContext.getVariable("a");
+        System.out.println(v);
 
         // Find entry point and execute
         FunctionImplementation main = findEntryPoint();
@@ -36,7 +37,7 @@ public class ProgramRepository {
     private FunctionImplementation findEntryPoint() {
         return program.content().stream()
                 .flatMap(c -> c.functionImplementations().stream())
-                .filter(f -> f.name().equals("main"))
+                .filter(f -> f.name().equalsIgnoreCase("main"))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No main method found"));
     }

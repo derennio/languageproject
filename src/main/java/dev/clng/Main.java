@@ -1,16 +1,19 @@
 package dev.clng;
 
+import dev.clng.gui.CodeEditor;
 import dev.clng.interpreter.ProgramRepository;
 import dev.clng.interpreter.TokenInterpreter;
 import dev.clng.parser.LexicalParser;
+
+import java.awt.*;
+import java.io.IOException;
 
 /**
  * @author ${USER}
  **/
 public class Main
 {
-    public static void main(String[] args)
-    {
+    public static void main(String[] args) throws IOException, FontFormatException {
         LexicalParser parser = new LexicalParser("""
                 def class Main:
                 def int a = 5
@@ -21,6 +24,8 @@ public class Main
                 add(a, b) <- a + b
 
                 def main():
+                print "test"
+                print a
                 print add(3, 4)
 
                 !endclass
@@ -34,6 +39,7 @@ public class Main
                 !endclass""");
         var result = parser.parseLines();
         new TokenInterpreter().createStructure(result);
-        new ProgramRepository().execute();
+        //new ProgramRepository().execute();
+        new CodeEditor();
     }
 }
