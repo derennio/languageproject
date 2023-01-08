@@ -1,21 +1,22 @@
 package dev.clng.gui;
 
+import dev.clng.interpreter.ProgramRepository;
+import dev.clng.interpreter.TokenInterpreter;
+import dev.clng.parser.LexicalParser;
+import dev.clng.token.Token;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.*;
-import java.util.Objects;
+import java.util.List;
 import javax.swing.*;
 
 public class CodeEditor extends JFrame {
+    @Serial
     private static final long serialVersionUID = 1L;
-    private JTextArea textArea;
-    private JTextArea outputArea;
-    private JMenuItem openMenuItem;
-    private JMenuItem saveMenuItem;
-    private JMenuItem saveAsMenuItem;
-    private JMenuItem runMenuItem;
-    private JMenuItem exitMenuItem;
+    private final JTextArea textArea;
+    private final JTextArea outputArea;
     private File currentFile;
 
     public CodeEditor() throws IOException, FontFormatException {
@@ -30,7 +31,8 @@ public class CodeEditor extends JFrame {
         textArea.setFont(Font.createFont(Font.TRUETYPE_FONT, targetStream).deriveFont(14f));
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
-        outputArea = new JTextArea();
+        outputArea = new JTextArea(10, 1);
+        outputArea.setEditable(false);
         add(new JScrollPane(outputArea), BorderLayout.SOUTH);
 
         JMenuBar menuBar = new JMenuBar();
@@ -39,7 +41,7 @@ public class CodeEditor extends JFrame {
         JMenu fileMenu = new JMenu("File");
         menuBar.add(fileMenu);
 
-        openMenuItem = new JMenuItem("Open");
+        JMenuItem openMenuItem = new JMenuItem("Open");
         openMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -48,7 +50,7 @@ public class CodeEditor extends JFrame {
         });
         fileMenu.add(openMenuItem);
 
-        saveMenuItem = new JMenuItem("Save");
+        JMenuItem saveMenuItem = new JMenuItem("Save");
         saveMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -57,7 +59,7 @@ public class CodeEditor extends JFrame {
         });
         fileMenu.add(saveMenuItem);
 
-        saveAsMenuItem = new JMenuItem("Save As...");
+        JMenuItem saveAsMenuItem = new JMenuItem("Save As...");
         saveAsMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -69,7 +71,7 @@ public class CodeEditor extends JFrame {
         JMenu runMenu = new JMenu("Run");
         menuBar.add(runMenu);
 
-        runMenuItem = new JMenuItem("Run");
+        JMenuItem runMenuItem = new JMenuItem("Run");
         runMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -80,7 +82,7 @@ public class CodeEditor extends JFrame {
 
         fileMenu.addSeparator();
 
-        exitMenuItem = new JMenuItem("Exit");
+        JMenuItem exitMenuItem = new JMenuItem("Exit");
         exitMenuItem.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -145,5 +147,20 @@ public class CodeEditor extends JFrame {
         }
     }
 
-    private void runCode() {}
+    private void runCode() {
+        var code = textArea.getText();
+
+        LexicalParser lexicalParser = new LexicalParser(code);
+        List<Token> tokens = lexicalParser.parseLines();
+
+        TokenInterpreter tokenInterpreter = new TokenInterpreter();
+        tokenInterpreter.createStructure(tokens);
+
+        new ProgramRepository().execute();
+    }
+
+    public JTextArea getOutputArea()
+    {
+        return outputArea;
+    }
 }

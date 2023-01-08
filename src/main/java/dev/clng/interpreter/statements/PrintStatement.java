@@ -1,6 +1,7 @@
 package dev.clng.interpreter.statements;
 
-import dev.clng.interpreter.RuntimeContext;
+import dev.clng.interpreter.expressions.ExpressionHelper;
+import dev.clng.interpreter.expressions.IExpression;
 import dev.clng.token.LiteralTokenType;
 
 import java.util.Arrays;
@@ -24,7 +25,8 @@ public class PrintStatement implements IStatement
         {
             System.out.println(retrieveValue(value));
         } else {
-            System.out.println(RuntimeContext.retrieveVar(value));
+            IExpression expression = ExpressionHelper.generateExpression(value);
+            System.out.println(expression.eval());
         }
     }
 

@@ -23,9 +23,6 @@ public class ProgramRepository {
                 RuntimeContext.addVariable(declarationImplementation.name(), type, declarationImplementation.value());
             }
         }
-        var x = RuntimeContext.getMemory();
-        int v = RuntimeContext.getVariable("a");
-        System.out.println(v);
 
         // Find entry point and execute
         FunctionImplementation main = findEntryPoint();
