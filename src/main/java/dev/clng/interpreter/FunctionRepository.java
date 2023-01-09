@@ -2,40 +2,37 @@ package dev.clng.interpreter;
 
 import dev.clng.common.Tuple;
 
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author simon & ennio
  **/
 public class FunctionRepository
 {
-    private Map<String, Tuple<Object[], Object>> functions;
+    private static Map<String, Tuple<String[], Object>> functions = new HashMap<>();
 
-    public FunctionRepository(Map<String, Tuple<Object[], Object>> functions)
-    {
-        this.functions = functions;
-    }
-
-    public void setReturnValue(String name, Object[] args, Object value)
+    public static void setReturnValue(String name, String[] args, Object value)
     {
         functions.put(name, new Tuple<>(args, value));
     }
 
-    public Object call(String name, Object[] args)
+    public static Object call(String name, String[] args)
     {
-        Tuple<Object[], Object> function = functions.get(name);
+        Tuple<String[], Object> function = functions.get(name);
         if (function == null) {
             throw new RuntimeException("Function '%s' does not exist".formatted(name));
         }
 
-        Object[] params = function.v1();
+        String[] params = function.v1();
         if (params.length != args.length) {
             throw new RuntimeException("Function '%s' expects %d arguments, but %d were given".formatted(name, params.length, args.length));
         }
 
         for (int i = 0; i < params.length; i++) {
-            if (!params[i].equals(args[i].getClass())) {
-                throw new RuntimeException("Function '%s' expects argument %d to be of type %s, but %s was given".formatted(name, i, params[i], args[i].getClass()));
+            if (!Objects.equals(params[i], args[i])) {
+                throw new RuntimeException("Function '%s' expected argument '%s' at index %d, but '%s' was provided".formatted(name, params[i], i, args[i]));
             }
         }
 
