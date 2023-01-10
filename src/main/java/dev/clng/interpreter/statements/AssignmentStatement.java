@@ -1,6 +1,8 @@
 package dev.clng.interpreter.statements;
 
 import dev.clng.interpreter.RuntimeContext;
+import dev.clng.interpreter.expressions.ExpressionHelper;
+import dev.clng.interpreter.expressions.IExpression;
 import dev.clng.token.LiteralTokenType;
 
 import java.util.Arrays;
@@ -26,6 +28,9 @@ public class AssignmentStatement implements IStatement
         {
             RuntimeContext.updateVariable(variableName, retrieveValue(value));
         } else {
+            IExpression expression = ExpressionHelper.generateExpression(value);
+            var result = expression.eval();
+            RuntimeContext.updateVariable(variableName, result.toString());
         }
     }
 

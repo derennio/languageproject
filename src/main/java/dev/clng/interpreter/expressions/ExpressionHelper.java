@@ -65,7 +65,7 @@ public class ExpressionHelper
                 return new OrExpression(determineLiteralValue(matcher.group("left")), determineLiteralValue(matcher.group("right")));
             }
             case FunctionCall -> {
-                return new FunctionCallExpression(determineLiteralValue(matcher.group("name")), matcher.group("args").split(","));
+                return new FunctionCallExpression(matcher.group("name"), matcher.group("args").split(","));
             }
             case Variable -> {
                 return new VariableExpression(determineLiteralValue(matcher.group("name")));

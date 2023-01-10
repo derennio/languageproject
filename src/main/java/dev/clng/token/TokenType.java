@@ -7,17 +7,18 @@ public enum TokenType
 {
     // Definitions
     FuncDef("def ((?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\((?<args>[a-zA-Z_][a-zA-Z0-9_]*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1}(, [a-zA-Z_][a-zA-Z0-9_]*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1})*){0,1}\\)):"),
-    ObjDef("def object (?<name>[a-zA-Z_][a-zA-Z0-9_]*):"),
     ClassDef("def class (?<name>[a-zA-Z_][a-zA-Z0-9_]*):"),
-    ReturnDef("(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\(((?<args>[a-zA-Z_0-9]+\\s{0,1}(, [a-zA-Z_0-9]+\\s{0,1})*)){0,1}\\)\\s*<-\\s*(?<value>.*)"),
-    Assignment("(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\s*<-\\s*(?<value>.*)"),
-    IfStatement("if (?<condition>.*)\\s*:"),
+    ReturnDef("(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\(\\)\\s*<-\\s*(?<value>.*)"),
+    Assignment("(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\s*=\\s*(?<value>.*)"),
+    IfStatement("if (?<condition>.*): (?<code>.*)"),
     PrintStatement("print (?<value>.*)"),
     CommentLine("#(?<comment>.*)"),
     ClassTerminator("!endclass"),
+    EndIf("!endif"),
+    Else("!else"),
     EmptyLine("^\\s*$"),
-    VariableDecl("def (?<type>[a-zA-Z][a-zA-Z_0-9]*) (?<name>[a-zA-Z][a-zA-Z_0-9]*)( = (?<value>.+)){0,1}");
-
+    VariableDecl("def (?<type>[a-zA-Z][a-zA-Z_0-9]*) (?<name>[a-zA-Z][a-zA-Z_0-9]*)( = (?<value>.+)){0,1}"),
+    ExternalFuncCall("((?<class>[a-zA-Z_][a-zA-Z0-9_]*).){1}(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\((?<args>.*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1}(, .*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1})*){0,1}\\)");
     private final String pattern;
 
     TokenType(String pattern) {

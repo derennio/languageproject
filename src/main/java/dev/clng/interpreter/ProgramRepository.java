@@ -39,10 +39,25 @@ public class ProgramRepository {
                 .orElseThrow(() -> new IllegalStateException("No main method found"));
     }
 
-    private FunctionImplementation findMethod(ClassImplementation classImpl, String name) {
+    public static FunctionImplementation findMethod(ClassImplementation classImpl, String name) {
         return classImpl.functionImplementations().stream()
                 .filter(f -> f.name().equals(name))
                 .findFirst()
                 .orElseThrow(() -> new IllegalStateException("No such method"));
+    }
+
+    public static FunctionImplementation findMethod(String name) {
+        return program.content().stream()
+                .flatMap(c -> c.functionImplementations().stream())
+                .filter(f -> f.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No such method"));
+    }
+
+    public static ClassImplementation findClass(String name) {
+        return program.content().stream()
+                .filter(c -> c.name().equals(name))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("No such class"));
     }
 }

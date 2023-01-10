@@ -1,5 +1,7 @@
 package dev.clng.interpreter.expressions;
 
+import dev.clng.interpreter.ProgramRepository;
+
 /**
  * @author simon & ennio
  **/
@@ -17,6 +19,7 @@ public class FunctionCallExpression implements IExpression
     @Override
     public Object eval()
     {
-        return null;
+        var function = ProgramRepository.findMethod(functionName);
+        return function.call(arguments);
     }
 }

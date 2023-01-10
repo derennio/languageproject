@@ -14,7 +14,7 @@ import java.util.regex.Matcher;
  **/
 public class TokenInterpreter
 {
-    private IStatement convertTokenToStatement(Token token)
+    public IStatement convertTokenToStatement(Token token)
     {
         // check if either t1 or t2 are false
         var t1 = token.matcher().find();
@@ -26,11 +26,12 @@ public class TokenInterpreter
         }
 
         return switch (token.type()) {
-            case ReturnDef -> new ReturnStatement(token.matcher().group("name"), token.matcher().group("args"), token.matcher().group("value"));
+            case ReturnDef -> new ReturnStatement(token.matcher().group("name"), token.matcher().group("value"));
             case Assignment -> new AssignmentStatement(token.matcher().group("name"), token.matcher().group("value"));
             case IfStatement -> new IfStatement(token.matcher().group("condition"), token.matcher().group("code"));
             case PrintStatement -> new PrintStatement(token.matcher().group("value"));
             case CommentLine -> new CommentStatement();
+            case ExternalFuncCall -> new FunctionCallStatement(token.matcher().group("class"), token.matcher().group("name"), token.matcher().group("args").split(","));
             default -> null;
         };
     }
@@ -48,12 +49,18 @@ public class TokenInterpreter
                 fMatcher.matches();
                 var name = fMatcher.group("name");
                 var args = fMatcher.group("args");
+                if (args == null) {
+                    args = "";
+                }
                 List<IStatement> fStatements = new ArrayList<>();
                 for (Token token : function.subList(1, function.size() - 1)) {
                     IStatement statement = convertTokenToStatement(token);
                     fStatements.add(statement);
                 }
-                var impl = new FunctionImplementation(name, args, fStatements);
+
+                //List<IfImplementation> ifStatements = collectIfStatements(function.subList(1, function.size() - 1));
+
+                var impl = new FunctionImplementation(name, args.split(","), fStatements);
                 functionImplementations.add(impl);
             }
 
@@ -121,5 +128,53 @@ public class TokenInterpreter
             }
         }
         return declarations;
+    }
+
+    public List<IfImplementation> collectIfStatements(List<Token> tokens) {
+        List<IfImplementation> ifStatements = new ArrayList<>();
+        List<List<Token>> ifBlocks = new ArrayList<>();
+        for (Token token : tokens) {
+            if (token.type().equals(TokenType.IfStatement)) {
+                List<Token> functionTokens = new ArrayList<>();
+                functionTokens.add(token);
+                while (!token.type().equals(TokenType.EndIf)) {
+                    token = tokens.get(tokens.indexOf(token) + 1);
+                    functionTokens.add(token);
+                }
+                ifBlocks.add(functionTokens);
+            }
+        }
+
+        for (List<Token> ifBlock : ifBlocks) {
+            List<Token> successOps = new ArrayList<>();
+            List<Token> failureOps = new ArrayList<>();
+            for (Token token : ifBlock) {
+                while (!token.type().equals(TokenType.Else)) {
+                    token = ifBlock.get(ifBlock.indexOf(token) + 1);
+                    successOps.add(token);
+                }
+                while (!token.type().equals(TokenType.EndIf)) {
+                    token = ifBlock.get(ifBlock.indexOf(token) + 1);
+                    failureOps.add(token);
+                }
+            }
+
+            List<IStatement> fsStatements = new ArrayList<>();
+            for (Token token : successOps.subList(1, successOps.size() - 1)) {
+                IStatement statement = convertTokenToStatement(token);
+                fsStatements.add(statement);
+            }
+
+            List<IStatement> ffStatements = new ArrayList<>();
+            for (Token token : failureOps.subList(1, failureOps.size() - 1)) {
+                IStatement statement = convertTokenToStatement(token);
+                ffStatements.add(statement);
+            }
+
+            IfImplementation ifImplementation = new IfImplementation(ifBlock.get(0).value(), fsStatements, ffStatements);
+            ifStatements.add(ifImplementation);
+        }
+
+        return ifStatements;
     }
 }
