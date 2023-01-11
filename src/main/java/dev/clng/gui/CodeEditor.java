@@ -19,16 +19,25 @@ public class CodeEditor extends JFrame {
     private final JTextArea outputArea;
     private File currentFile;
 
-    public CodeEditor() throws IOException, FontFormatException {
+    public CodeEditor() {
         super("Code Editor");
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(800, 600));
 
-        File initialFile = new File("src/main/resources/JetBrainsMono.ttf");
-        InputStream targetStream = new FileInputStream(initialFile);
-
         textArea = new JTextArea();
-        textArea.setFont(Font.createFont(Font.TRUETYPE_FONT, targetStream).deriveFont(14f));
+
+        File initialFile = new File("src/main/resources/JetBrainsMono.ttf");
+        try
+        {
+            InputStream inputStream = new FileInputStream(initialFile);
+            textArea.setFont(Font.createFont(Font.TRUETYPE_FONT, inputStream).deriveFont(14f));
+        } catch (FileNotFoundException e)
+        {
+            System.out.println("Font file not found!");
+        } catch (IOException | FontFormatException e)
+        {
+            throw new RuntimeException(e);
+        }
         add(new JScrollPane(textArea), BorderLayout.CENTER);
 
         outputArea = new JTextArea(10, 1);

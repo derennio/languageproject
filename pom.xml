@@ -42,7 +42,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>dev.lng.Main</mainClass>
+                            <mainClass>dev.clng.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

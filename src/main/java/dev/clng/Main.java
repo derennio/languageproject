@@ -17,9 +17,8 @@ public class Main
 {
     /**
      * @param args cmd args
-     * @throws IOException font handling
      */
-    public static void main(String[] args) throws IOException, FontFormatException {
+    public static void main(String[] args) {
         var ce = new CodeEditor();
         setupOutput(ce);
     }
