@@ -26,8 +26,11 @@ public class FunctionCallStatement implements IStatement
     @Override
     public void execute()
     {
-        var classObj = ProgramRepository.findClass(className);
-        var function = ProgramRepository.findMethod(classObj, name);
-        function.call(args);
+        if (className == null) {
+            ProgramRepository.findMethod(name).call(args);
+        } else {
+            var classObj = ProgramRepository.findClass(className);
+            ProgramRepository.findMethod(classObj, name).call(args);
+        }
     }
 }

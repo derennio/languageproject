@@ -20,6 +20,10 @@ public class LexicalParser
         this.input = input.split("\n");
     }
 
+    /**
+     * Method to parse the input and return a list of tokens
+     * @return the tokens
+     */
     public List<Token> parseLines() {
         List<Token> tokens = new ArrayList<>();
         for (int i = 0; i < input.length; i++) {

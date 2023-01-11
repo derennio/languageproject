@@ -5,5 +5,8 @@ package dev.clng.interpreter.statements;
  **/
 public interface IStatement
 {
+    /**
+     * Method to execute the statement.
+     */
     void execute();
 }

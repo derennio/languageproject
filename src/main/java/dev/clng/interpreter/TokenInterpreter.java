@@ -14,6 +14,11 @@ import java.util.regex.Matcher;
  **/
 public class TokenInterpreter
 {
+    /**
+     * Method to interpret a specific token and convert it into an executable statement.
+     * @param token the token to interpret
+     * @return the statement
+     */
     public IStatement convertTokenToStatement(Token token)
     {
         // check if either t1 or t2 are false
@@ -32,10 +37,16 @@ public class TokenInterpreter
             case PrintStatement -> new PrintStatement(token.matcher().group("value"));
             case CommentLine -> new CommentStatement();
             case ExternalFuncCall -> new FunctionCallStatement(token.matcher().group("class"), token.matcher().group("name"), token.matcher().group("args").split(","));
+            case For -> new ForStatement(token.matcher().group("name"), token.matcher().group("range"), token.matcher().group("code"));
             default -> null;
         };
     }
 
+    /**
+     * Method to interpret a list of tokens and create a structure based on the following principles.
+     * Classes hold functions and globally defined variables. Functions hold statements. Statements may hold expressions.
+     * @param tokens the tokens to interpret
+     */
     public void createStructure(List<Token> tokens) {
         List<ClassImplementation> program = new ArrayList<>();
         var classes = collectClasses(tokens);
@@ -57,8 +68,6 @@ public class TokenInterpreter
                     IStatement statement = convertTokenToStatement(token);
                     fStatements.add(statement);
                 }
-
-                //List<IfImplementation> ifStatements = collectIfStatements(function.subList(1, function.size() - 1));
 
                 var impl = new FunctionImplementation(name, args.split(","), fStatements);
                 functionImplementations.add(impl);
@@ -84,7 +93,7 @@ public class TokenInterpreter
         ProgramRepository.setProgram(new Program(program));
     }
 
-    public List<Tuple<String, List<Token>>> collectClasses(List<Token> tokens)
+    private List<Tuple<String, List<Token>>> collectClasses(List<Token> tokens)
     {
         List<Tuple<String, List<Token>>> classes = new ArrayList<>();
         for (Token token : tokens) {
@@ -104,7 +113,7 @@ public class TokenInterpreter
         return classes;
     }
 
-    public List<List<Token>> collectFunctions(List<Token> tokens) {
+    private List<List<Token>> collectFunctions(List<Token> tokens) {
         List<List<Token>> functions = new ArrayList<>();
         for (Token token : tokens) {
             if (token.type().equals(TokenType.FuncDef)) {
@@ -120,7 +129,7 @@ public class TokenInterpreter
         return functions;
     }
 
-    public List<Token> collectDeclarations(List<Token> tokens) {
+    private List<Token> collectDeclarations(List<Token> tokens) {
         List<Token> declarations = new ArrayList<>();
         for (Token token : tokens) {
             if (token.type().equals(TokenType.VariableDecl)) {
@@ -128,53 +137,5 @@ public class TokenInterpreter
             }
         }
         return declarations;
-    }
-
-    public List<IfImplementation> collectIfStatements(List<Token> tokens) {
-        List<IfImplementation> ifStatements = new ArrayList<>();
-        List<List<Token>> ifBlocks = new ArrayList<>();
-        for (Token token : tokens) {
-            if (token.type().equals(TokenType.IfStatement)) {
-                List<Token> functionTokens = new ArrayList<>();
-                functionTokens.add(token);
-                while (!token.type().equals(TokenType.EndIf)) {
-                    token = tokens.get(tokens.indexOf(token) + 1);
-                    functionTokens.add(token);
-                }
-                ifBlocks.add(functionTokens);
-            }
-        }
-
-        for (List<Token> ifBlock : ifBlocks) {
-            List<Token> successOps = new ArrayList<>();
-            List<Token> failureOps = new ArrayList<>();
-            for (Token token : ifBlock) {
-                while (!token.type().equals(TokenType.Else)) {
-                    token = ifBlock.get(ifBlock.indexOf(token) + 1);
-                    successOps.add(token);
-                }
-                while (!token.type().equals(TokenType.EndIf)) {
-                    token = ifBlock.get(ifBlock.indexOf(token) + 1);
-                    failureOps.add(token);
-                }
-            }
-
-            List<IStatement> fsStatements = new ArrayList<>();
-            for (Token token : successOps.subList(1, successOps.size() - 1)) {
-                IStatement statement = convertTokenToStatement(token);
-                fsStatements.add(statement);
-            }
-
-            List<IStatement> ffStatements = new ArrayList<>();
-            for (Token token : failureOps.subList(1, failureOps.size() - 1)) {
-                IStatement statement = convertTokenToStatement(token);
-                ffStatements.add(statement);
-            }
-
-            IfImplementation ifImplementation = new IfImplementation(ifBlock.get(0).value(), fsStatements, ffStatements);
-            ifStatements.add(ifImplementation);
-        }
-
-        return ifStatements;
     }
 }

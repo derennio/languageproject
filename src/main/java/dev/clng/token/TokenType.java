@@ -14,17 +14,19 @@ public enum TokenType
     PrintStatement("print (?<value>.*)"),
     CommentLine("#(?<comment>.*)"),
     ClassTerminator("!endclass"),
-    EndIf("!endif"),
-    Else("!else"),
     EmptyLine("^\\s*$"),
     VariableDecl("def (?<type>[a-zA-Z][a-zA-Z_0-9]*) (?<name>[a-zA-Z][a-zA-Z_0-9]*)( = (?<value>.+)){0,1}"),
-    ExternalFuncCall("((?<class>[a-zA-Z_][a-zA-Z0-9_]*).){1}(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\((?<args>.*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1}(, .*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1})*){0,1}\\)");
+    ExternalFuncCall("((?<class>[a-zA-Z_][a-zA-Z0-9_]*)\\.){0,1}(?<name>[a-zA-Z_][a-zA-Z0-9_]*)\\((?<args>.*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1}(, .*\\s{0,1}([a-zA-Z_][a-zA-Z0-9_]*){0,1})*){0,1}\\)"),
+    For("for (?<name>[a-zA-Z_][a-zA-Z0-9_]*) in (?<range>[0-9]+): (?<code>.*)");
     private final String pattern;
 
     TokenType(String pattern) {
         this.pattern = pattern;
     }
 
+    /**
+     * @return the pattern
+     */
     public String getPattern() {
         return pattern;
     }

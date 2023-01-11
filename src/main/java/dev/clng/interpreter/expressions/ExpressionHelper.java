@@ -1,5 +1,6 @@
 package dev.clng.interpreter.expressions;
 
+import dev.clng.interpreter.ProgramRepository;
 import dev.clng.interpreter.RuntimeContext;
 import dev.clng.token.ExpressionType;
 
@@ -65,10 +66,13 @@ public class ExpressionHelper
                 return new OrExpression(determineLiteralValue(matcher.group("left")), determineLiteralValue(matcher.group("right")));
             }
             case FunctionCall -> {
-                return new FunctionCallExpression(matcher.group("name"), matcher.group("args").split(","));
+                return new FunctionCallExpression(matcher.group("class"), matcher.group("name"), matcher.group("args").split(","));
             }
             case Variable -> {
                 return new VariableExpression(determineLiteralValue(matcher.group("name")));
+            }
+            case Not -> {
+                return new NotExpression(determineLiteralValue(matcher.group("condition")));
             }
             default -> throw new RuntimeException("'%s' does not qualify as an expression".formatted(expr));
         }
@@ -82,7 +86,9 @@ public class ExpressionHelper
             Matcher matcher = Pattern.compile(ExpressionType.FunctionCall.getPattern()).matcher(expr);
             matcher.find();
             matcher.matches();
-            return "0";
+            var result = ProgramRepository.findMethod(matcher.group("name")).call(matcher.group("args").split(","));
+            assert result != null;
+            return result.toString();
         }
         return expr;
     }

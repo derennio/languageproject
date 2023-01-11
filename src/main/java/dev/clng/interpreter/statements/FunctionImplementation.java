@@ -2,6 +2,8 @@ package dev.clng.interpreter.statements;
 
 import dev.clng.interpreter.FunctionRepository;
 import dev.clng.interpreter.RuntimeContext;
+import dev.clng.interpreter.expressions.ExpressionHelper;
+import dev.clng.interpreter.expressions.IExpression;
 import dev.clng.token.DataTokenType;
 import dev.clng.token.LiteralTokenType;
 
@@ -26,7 +28,7 @@ public record FunctionImplementation(String name,
                     .orElseThrow(() -> new RuntimeException("Invalid argument type '%s'".formatted(arg)));
 
             var argName = arg.split(" ")[1];
-            var provided = provArgs[i];
+            var provided = provArgs[i].trim();
             var providedType = Arrays.stream(LiteralTokenType.values())
                     .filter(ltt -> provided.matches(ltt.getPattern()))
                     .findFirst()
@@ -67,7 +69,8 @@ public record FunctionImplementation(String name,
 
             return value;
         } else {
-            var rV = RuntimeContext.retrieveVar(value);
+            IExpression expression = ExpressionHelper.generateExpression(value);
+            var rV = expression.eval().toString();
 
             for (String arg : args)
             {

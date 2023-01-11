@@ -14,6 +14,9 @@ public enum LiteralTokenType {
         this.pattern = pattern;
     }
 
+    /**
+     * @return the pattern
+     */
     public String getPattern() {
         return pattern;
     }

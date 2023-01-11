@@ -5,5 +5,9 @@ package dev.clng.interpreter.expressions;
  **/
 public interface IExpression
 {
+    /**
+     * Method to evaluate the expression.
+     * @return the result
+     */
     Object eval();
 }

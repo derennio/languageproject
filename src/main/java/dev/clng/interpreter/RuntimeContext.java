@@ -12,14 +12,34 @@ public class RuntimeContext {
     private static Map<String, Tuple<DataTokenType, String>> memory = new HashMap<>();
     private static Map<String, Tuple<DataTokenType, String>> locals = new HashMap<>();
 
+    /**
+     * Method to declare a globally available variable.
+     *
+     * @param name the name of the variable
+     * @param type the type of the variable
+     * @param value the value of the variable
+     */
     public static void addVariable(String name, DataTokenType type, String value) {
         memory.put(name, new Tuple<>(type, value));
     }
 
+    /**
+     * Method to declare a locally available variable.
+     *
+     * @param name the name of the variable
+     * @param type the type of the variable
+     * @param value the value of the variable
+     */
     public static void addLocalVariable(String name, DataTokenType type, String value) {
         locals.put(name, new Tuple<>(type, value));
     }
 
+    /**
+     * Method to update any variable.
+     *
+     * @param name the name of the variable
+     * @param value the value of the variable
+     */
     public static void updateVariable(String name, String value) {
         if (locals.containsKey(name)) {
             locals.put(name, new Tuple<>(locals.get(name).v1(), value));
@@ -42,10 +62,21 @@ public class RuntimeContext {
                 .orElseThrow();
     }
 
+    /**
+     * Method to clear a local.
+     *
+     * @param name the name of the variable
+     */
     public static void clearLocal(String name) {
         locals.remove(name);
     }
 
+    /**
+     * Method to retrieve a variable.
+     *
+     * @param name the name of the variable
+     * @return the value of the variable
+     */
     public static Object retrieveVar(String name) {
         Tuple<DataTokenType, String> val = locals.get(name);
 

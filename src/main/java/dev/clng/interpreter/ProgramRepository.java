@@ -8,10 +8,18 @@ import java.util.Arrays;
 public class ProgramRepository {
     private static Program program;
 
+    /**
+     * Method to set the program to be executed.
+     *
+     * @param program The tokens to be executed.
+     */
     public static void setProgram(Program program) {
         ProgramRepository.program = program;
     }
 
+    /**
+     * Method to start executing the program.
+     */
     public void execute() {
         // Find declarations and create variables
         for (ClassImplementation classImplementation : program.content()) {
@@ -39,6 +47,12 @@ public class ProgramRepository {
                 .orElseThrow(() -> new IllegalStateException("No main method found"));
     }
 
+    /**
+     * Method to find any method, given a class and name
+     *
+     * @param classImpl The class
+     * @param name The name of the method
+     */
     public static FunctionImplementation findMethod(ClassImplementation classImpl, String name) {
         return classImpl.functionImplementations().stream()
                 .filter(f -> f.name().equals(name))
@@ -46,6 +60,11 @@ public class ProgramRepository {
                 .orElseThrow(() -> new IllegalStateException("No such method"));
     }
 
+    /**
+     * Method to find any method, given a name
+     *
+     * @param name The name of the method
+     */
     public static FunctionImplementation findMethod(String name) {
         return program.content().stream()
                 .flatMap(c -> c.functionImplementations().stream())
@@ -54,6 +73,11 @@ public class ProgramRepository {
                 .orElseThrow(() -> new IllegalStateException("No such method"));
     }
 
+    /**
+     * Method to find any class, given a name
+     *
+     * @param name The name of the class
+     */
     public static ClassImplementation findClass(String name) {
         return program.content().stream()
                 .filter(c -> c.name().equals(name))
